@@ -20,6 +20,7 @@ const targetLangs = [
   { value: "Python", label: "Python" },
   { value: "JavaScript", label: "JavaScript" },
   { value: "Java", label: "Java" },
+  { value: "C++", label: "C++" },
 ];
 
 const Index = () => {
