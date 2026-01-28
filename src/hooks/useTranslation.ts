@@ -2,7 +2,18 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+interface CodeError {
+  type: string;
+  location: string;
+  description: string;
+  original: string;
+  corrected: string;
+}
+
 interface TranslationResult {
+  hasErrors: boolean;
+  errors: CodeError[];
+  correctedSourceCode: string;
   translatedCode: string;
   explanation: string;
   complexity: string;
@@ -46,13 +57,20 @@ export function useTranslation() {
       }
 
       setResult({
+        hasErrors: data.hasErrors || false,
+        errors: data.errors || [],
+        correctedSourceCode: data.correctedSourceCode || code,
         translatedCode: data.translatedCode,
         explanation: data.explanation,
         complexity: data.complexity,
         suggestions: data.suggestions || "",
       });
 
-      toast.success("Code translated successfully!");
+      if (data.hasErrors && data.errors?.length > 0) {
+        toast.warning(`Found ${data.errors.length} error(s) in your code - check the corrections!`);
+      } else {
+        toast.success("Code validated and translated successfully!");
+      }
     } catch (error) {
       console.error("Translation error:", error);
       const message = error instanceof Error ? error.message : "Failed to translate code";

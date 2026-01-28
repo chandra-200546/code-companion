@@ -53,29 +53,64 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are an expert software engineer and programming tutor. Your task is to:
-1. Translate code from ${sourceLang} to ${targetLang}
-2. Preserve the original logic and intent completely
-3. Follow best practices and idioms of ${targetLang}
-4. Optimize for ${purpose === "DSA" ? "Data Structures and Algorithms clarity" : purpose === "Interview" ? "clean, interview-ready code" : "maximum readability and maintainability"}
-5. Provide a clear, step-by-step explanation
-6. Analyze time and space complexity
+    const systemPrompt = `You are an expert software engineer, code reviewer, and programming tutor. Your task is to:
+
+STEP 1 - CODE VALIDATION:
+First, carefully analyze the provided ${sourceLang} code for any errors including:
+- Syntax errors (missing semicolons, brackets, parentheses, etc.)
+- Type errors (incorrect types, missing type declarations)
+- Logic errors (infinite loops, off-by-one errors, null pointer issues)
+- Missing imports or declarations
+- Incorrect function signatures
+- Variable scope issues
+- Memory issues (in C++/Java)
+
+STEP 2 - IF ERRORS FOUND:
+- List each error with its location (line number if possible)
+- Explain what the error is in simple terms
+- Show the corrected version of that specific part
+- Provide the fully corrected source code
+
+STEP 3 - TRANSLATION:
+After validation (and correction if needed), translate the (corrected) code from ${sourceLang} to ${targetLang}:
+- Preserve the original logic and intent completely
+- Follow best practices and idioms of ${targetLang}
+- Optimize for ${purpose === "DSA" ? "Data Structures and Algorithms clarity" : purpose === "Interview" ? "clean, interview-ready code" : "maximum readability and maintainability"}
+
+STEP 4 - EXPLANATION:
+Provide a clear, step-by-step explanation of the code logic.
+
+STEP 5 - COMPLEXITY ANALYSIS:
+Analyze and provide time and space complexity.
 
 IMPORTANT: You must respond with a valid JSON object with exactly these fields:
-- translatedCode: The translated code as a string
-- explanation: Step-by-step explanation as a string (use numbered steps)
-- complexity: Time and space complexity analysis as a string
-- suggestions: Optional improvements or best practices as a string
+{
+  "hasErrors": boolean (true if the original code had errors),
+  "errors": [
+    {
+      "type": "string (e.g., 'Syntax Error', 'Logic Error', 'Type Error')",
+      "location": "string (e.g., 'Line 5' or 'Function main()')",
+      "description": "string (what the error is)",
+      "original": "string (the problematic code snippet)",
+      "corrected": "string (the fixed code snippet)"
+    }
+  ] (array of errors found, empty if no errors),
+  "correctedSourceCode": "string (the corrected source code, or original if no errors)",
+  "translatedCode": "string (the translated code in target language)",
+  "explanation": "string (step-by-step explanation with numbered steps)",
+  "complexity": "string (time and space complexity analysis)",
+  "suggestions": "string (optional improvements or best practices)"
+}
 
 Do not include markdown code blocks in your response. Return only valid JSON.`;
 
-    const userPrompt = `Translate this ${sourceLang} code to ${targetLang}:
+    const userPrompt = `Validate and translate this ${sourceLang} code to ${targetLang}:
 
 \`\`\`${sourceLang.toLowerCase()}
 ${code}
 \`\`\`
 
-Remember to return a JSON object with translatedCode, explanation, complexity, and suggestions fields.`;
+Remember to first check for errors, then translate the corrected code, and return a JSON object with hasErrors, errors, correctedSourceCode, translatedCode, explanation, complexity, and suggestions fields.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -150,6 +185,9 @@ Remember to return a JSON object with translatedCode, explanation, complexity, a
 
     return new Response(
       JSON.stringify({
+        hasErrors: parsedResult.hasErrors || false,
+        errors: parsedResult.errors || [],
+        correctedSourceCode: parsedResult.correctedSourceCode || code,
         translatedCode: parsedResult.translatedCode,
         explanation: parsedResult.explanation,
         complexity: parsedResult.complexity,

@@ -6,6 +6,7 @@ import { PurposeSelect } from "@/components/PurposeSelect";
 import { TranslateButton } from "@/components/TranslateButton";
 import { OutputSection } from "@/components/OutputSection";
 import { LoadingState } from "@/components/LoadingState";
+import { ErrorValidation } from "@/components/ErrorValidation";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Card } from "@/components/ui/card";
 
@@ -95,13 +96,21 @@ const Index = () => {
           {isLoading && <LoadingState />}
           
           {result && !isLoading && (
-            <OutputSection
-              translatedCode={result.translatedCode}
-              explanation={result.explanation}
-              complexity={result.complexity}
-              suggestions={result.suggestions}
-              targetLanguage={targetLang}
-            />
+            <>
+              <ErrorValidation
+                hasErrors={result.hasErrors}
+                errors={result.errors}
+                correctedSourceCode={result.correctedSourceCode}
+                sourceLanguage={sourceLang}
+              />
+              <OutputSection
+                translatedCode={result.translatedCode}
+                explanation={result.explanation}
+                complexity={result.complexity}
+                suggestions={result.suggestions}
+                targetLanguage={targetLang}
+              />
+            </>
           )}
         </div>
 
