@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 const supportedSourceLangs = ["C++", "Java", "Python", "JavaScript"];
-const supportedTargetLangs = ["Python", "JavaScript", "Java"];
+const supportedTargetLangs = ["Python", "JavaScript", "Java", "C++"];
 const supportedPurposes = ["DSA", "Interview", "Readability"];
 
 serve(async (req) => {
