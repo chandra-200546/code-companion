@@ -9,6 +9,8 @@ import { LoadingState } from "@/components/LoadingState";
 import { ErrorValidation } from "@/components/ErrorValidation";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Card } from "@/components/ui/card";
+import { OptimizerSection } from "@/components/OptimizerSection";
+import { Separator } from "@/components/ui/separator";
 
 const sourceLangs = [
   { value: "C++", label: "C++" },
@@ -114,9 +116,17 @@ const Index = () => {
           )}
         </div>
 
+        {/* Separator between sections */}
+        <div className="py-12">
+          <Separator className="bg-border/50" />
+        </div>
+
+        {/* Optimizer Section */}
+        <OptimizerSection />
+
         {/* Footer */}
         <footer className="mt-16 text-center text-sm text-muted-foreground">
-          <p>Built for learning and understanding • AI-powered code translation</p>
+          <p>Built for learning and understanding • AI-powered code translation & optimization</p>
         </footer>
       </div>
     </div>
