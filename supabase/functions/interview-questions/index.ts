@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { company, questionIndex } = await req.json();
+    const { company, questionIndex, language = "Python" } = await req.json();
 
     if (!company) {
       throw new Error("Company name is required");
@@ -35,17 +35,17 @@ Your response must be a JSON object with this structure:
     "approach": "Brief explanation of the approach",
     "timeComplexity": "O(n) or similar",
     "spaceComplexity": "O(1) or similar",
-    "code": "Complete working code solution in Python",
+    "code": "Complete working code solution in ${language}",
     "explanation": "Step-by-step explanation of the solution"
   }
 }
 
-Make the explanation clear and interview-ready. Include edge cases if relevant.`;
+Make the explanation clear and interview-ready. Include edge cases if relevant. The code MUST be in ${language}.`;
 
       userPrompt = `Provide a detailed solution for this DSA question commonly asked at ${company}:
 Question #${questionIndex + 1}
 
-Generate a typical DSA question for position ${questionIndex + 1} that ${company} would ask, then provide its complete solution.`;
+Generate a typical DSA question for position ${questionIndex + 1} that ${company} would ask, then provide its complete solution in ${language}.`;
     } else {
       // Fetch list of questions
       systemPrompt = `You are a DSA interview preparation expert with deep knowledge of technical interviews at top tech companies.

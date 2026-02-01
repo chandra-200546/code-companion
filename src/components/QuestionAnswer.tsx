@@ -5,14 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import type { Question, Answer } from "@/hooks/useInterviewPrep";
+import type { Question, Answer, CodeLanguage } from "@/hooks/useInterviewPrep";
 
 interface QuestionAnswerProps {
   company: string;
   question: Question;
   answer: Answer | null;
   isLoading: boolean;
+  codeLanguage: CodeLanguage;
+  onLanguageChange: (language: CodeLanguage) => void;
   onBack: () => void;
 }
 
@@ -22,11 +31,19 @@ const difficultyColors = {
   Hard: "bg-red-500/20 text-red-400 border-red-500/30",
 };
 
+const languageIcons: Record<CodeLanguage, string> = {
+  Python: "🐍",
+  Java: "☕",
+  "C++": "⚡",
+};
+
 export function QuestionAnswer({
   company,
   question,
   answer,
   isLoading,
+  codeLanguage,
+  onLanguageChange,
   onBack,
 }: QuestionAnswerProps) {
   const [copied, setCopied] = useState(false);
@@ -63,6 +80,24 @@ export function QuestionAnswer({
           <h2 className="text-xl font-semibold text-foreground">
             #{question.id}. {question.title}
           </h2>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Code in:</span>
+          <Select value={codeLanguage} onValueChange={(v) => onLanguageChange(v as CodeLanguage)}>
+            <SelectTrigger className="w-32 bg-secondary border-border">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {(["Python", "Java", "C++"] as CodeLanguage[]).map((lang) => (
+                <SelectItem key={lang} value={lang}>
+                  <span className="flex items-center gap-2">
+                    <span>{languageIcons[lang]}</span>
+                    <span>{lang}</span>
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
