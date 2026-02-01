@@ -5,3 +5,9 @@ verify_jwt = false
 
 [functions.optimize-complexity]
 verify_jwt = false
+
+[functions.voice-chat]
+verify_jwt = false
+
+[functions.interview-questions]
+verify_jwt = false
