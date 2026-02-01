@@ -113,13 +113,29 @@ Make the questions realistic and company-specific based on known interview patte
       throw new Error("No response from AI");
     }
 
-    // Parse the JSON response
+    // Parse the JSON response - sanitize control characters first
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error("Invalid response format");
     }
 
-    const result = JSON.parse(jsonMatch[0]);
+    // Sanitize the JSON string by escaping control characters within string values
+    let jsonStr = jsonMatch[0];
+    
+    // Replace unescaped control characters that break JSON parsing
+    // This handles newlines, tabs, and other control chars inside string values
+    jsonStr = jsonStr.replace(/[\x00-\x1F\x7F]/g, (char: string) => {
+      const escapes: Record<string, string> = {
+        '\n': '\\n',
+        '\r': '\\r',
+        '\t': '\\t',
+        '\b': '\\b',
+        '\f': '\\f',
+      };
+      return escapes[char] || '';
+    });
+
+    const result = JSON.parse(jsonStr);
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
