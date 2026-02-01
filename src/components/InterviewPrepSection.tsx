@@ -13,6 +13,8 @@ export function InterviewPrepSection() {
     questions,
     selectedQuestion,
     answer,
+    codeLanguage,
+    setCodeLanguage,
     fetchQuestions,
     fetchAnswer,
     clearSelection,
@@ -25,7 +27,14 @@ export function InterviewPrepSection() {
 
   const handleSelectQuestion = (question: typeof selectedQuestion) => {
     if (selectedCompany && question) {
-      fetchAnswer(selectedCompany, question);
+      fetchAnswer(selectedCompany, question, codeLanguage);
+    }
+  };
+
+  const handleLanguageChange = (language: typeof codeLanguage) => {
+    setCodeLanguage(language);
+    if (selectedCompany && selectedQuestion) {
+      fetchAnswer(selectedCompany, selectedQuestion, language);
     }
   };
 
@@ -69,6 +78,8 @@ export function InterviewPrepSection() {
                 question={selectedQuestion}
                 answer={answer}
                 isLoading={isLoadingAnswer}
+                codeLanguage={codeLanguage}
+                onLanguageChange={handleLanguageChange}
                 onBack={handleBackToQuestions}
               />
             ) : (

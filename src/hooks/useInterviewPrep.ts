@@ -18,12 +18,15 @@ export interface Answer {
   explanation: string;
 }
 
+export type CodeLanguage = "Python" | "Java" | "C++";
+
 export function useInterviewPrep() {
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
   const [answer, setAnswer] = useState<Answer | null>(null);
+  const [codeLanguage, setCodeLanguage] = useState<CodeLanguage>("Python");
   const { toast } = useToast();
 
   const fetchQuestions = async (company: string) => {
@@ -56,14 +59,14 @@ export function useInterviewPrep() {
     }
   };
 
-  const fetchAnswer = async (company: string, question: Question) => {
+  const fetchAnswer = async (company: string, question: Question, language: CodeLanguage = codeLanguage) => {
     setIsLoadingAnswer(true);
     setSelectedQuestion(question);
     setAnswer(null);
 
     try {
       const { data, error } = await supabase.functions.invoke("interview-questions", {
-        body: { company, questionIndex: question.id - 1 },
+        body: { company, questionIndex: question.id - 1, language },
       });
 
       if (error) throw error;
@@ -96,6 +99,8 @@ export function useInterviewPrep() {
     questions,
     selectedQuestion,
     answer,
+    codeLanguage,
+    setCodeLanguage,
     fetchQuestions,
     fetchAnswer,
     clearSelection,
