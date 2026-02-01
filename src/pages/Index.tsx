@@ -11,6 +11,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { Card } from "@/components/ui/card";
 import { OptimizerSection } from "@/components/OptimizerSection";
 import { VoiceChatSection } from "@/components/VoiceChatSection";
+import { InterviewPrepSection } from "@/components/InterviewPrepSection";
 import { Separator } from "@/components/ui/separator";
 
 const sourceLangs = [
@@ -132,6 +133,14 @@ const Index = () => {
 
         {/* Voice Chat Section */}
         <VoiceChatSection />
+
+        {/* Separator between sections */}
+        <div className="py-12">
+          <Separator className="bg-border/50" />
+        </div>
+
+        {/* Interview Preparation Section */}
+        <InterviewPrepSection />
 
         {/* Footer */}
         <footer className="mt-16 text-center text-sm text-muted-foreground">
