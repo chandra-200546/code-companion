@@ -113,29 +113,44 @@ Make the questions realistic and company-specific based on known interview patte
       throw new Error("No response from AI");
     }
 
-    // Parse the JSON response - sanitize control characters first
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error("Invalid response format");
-    }
-
-    // Sanitize the JSON string by escaping control characters within string values
-    let jsonStr = jsonMatch[0];
+    // Parse the JSON response with robust extraction
+    let jsonStr = content;
     
-    // Replace unescaped control characters that break JSON parsing
-    // This handles newlines, tabs, and other control chars inside string values
-    jsonStr = jsonStr.replace(/[\x00-\x1F\x7F]/g, (char: string) => {
-      const escapes: Record<string, string> = {
-        '\n': '\\n',
-        '\r': '\\r',
-        '\t': '\\t',
-        '\b': '\\b',
-        '\f': '\\f',
-      };
-      return escapes[char] || '';
+    // Remove markdown code blocks if present
+    jsonStr = jsonStr.replace(/```json\s*/gi, '').replace(/```\s*/g, '');
+    
+    // Extract the JSON object
+    const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error("No JSON found in response:", content.substring(0, 500));
+      throw new Error("Invalid response format - no JSON object found");
+    }
+    
+    jsonStr = jsonMatch[0];
+    
+    // Sanitize control characters within string values only
+    // This regex finds string values and escapes control chars within them
+    jsonStr = jsonStr.replace(/"([^"\\]|\\.)*"/g, (match) => {
+      return match.replace(/[\x00-\x1F\x7F]/g, (char: string) => {
+        const escapes: Record<string, string> = {
+          '\n': '\\n',
+          '\r': '\\r',
+          '\t': '\\t',
+          '\b': '\\b',
+          '\f': '\\f',
+        };
+        return escapes[char] || '';
+      });
     });
 
-    const result = JSON.parse(jsonStr);
+    let result;
+    try {
+      result = JSON.parse(jsonStr);
+    } catch (parseError) {
+      console.error("JSON parse error:", parseError);
+      console.error("Attempted to parse:", jsonStr.substring(0, 1000));
+      throw new Error("Failed to parse AI response as JSON");
+    }
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
