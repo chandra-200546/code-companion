@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Header } from "@/components/Header";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { CodeEditor } from "@/components/CodeEditor";
 import { LanguageSelect } from "@/components/LanguageSelect";
 import { PurposeSelect } from "@/components/PurposeSelect";
@@ -13,6 +14,8 @@ import { OptimizerSection } from "@/components/OptimizerSection";
 import { VoiceChatSection } from "@/components/VoiceChatSection";
 import { InterviewPrepSection } from "@/components/InterviewPrepSection";
 import { Separator } from "@/components/ui/separator";
+import { DashboardHeader } from "@/components/DashboardHeader";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const sourceLangs = [
   { value: "C++", label: "C++" },
@@ -28,7 +31,8 @@ const targetLangs = [
   { value: "C++", label: "C++" },
 ];
 
-const Index = () => {
+export default function Dashboard() {
+  const { user, isLoading: authLoading } = useAuth();
   const [code, setCode] = useState("");
   const [sourceLang, setSourceLang] = useState("C++");
   const [targetLang, setTargetLang] = useState("Python");
@@ -40,6 +44,21 @@ const Index = () => {
     translate(sourceLang, targetLang, purpose, code);
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background p-8">
+        <div className="max-w-6xl mx-auto space-y-4">
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-96 w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Background gradient effects */}
@@ -49,9 +68,9 @@ const Index = () => {
       </div>
 
       <div className="relative container max-w-6xl mx-auto px-4 py-8 md:py-12">
-        <Header />
+        <DashboardHeader />
 
-        <div className="space-y-8">
+        <div className="space-y-8 mt-8">
           {/* Input Section */}
           <Card className="bg-card/50 backdrop-blur-sm border-border p-6">
             <div className="space-y-6">
@@ -149,6 +168,4 @@ const Index = () => {
       </div>
     </div>
   );
-};
-
-export default Index;
+}
