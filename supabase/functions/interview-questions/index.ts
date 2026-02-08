@@ -50,14 +50,38 @@ Generate a typical DSA question for position ${questionIndex + 1} that ${company
       // Fetch list of questions
       systemPrompt = `You are a DSA interview preparation expert with deep knowledge of technical interviews at top tech companies.
 
-Generate exactly 100 DSA interview questions that are commonly asked at the specified company. These should be realistic questions based on the company's known interview patterns.
+IMPORTANT: Each company has DISTINCT interview patterns and question preferences. You must generate questions that are SPECIFIC to the company mentioned, not generic DSA questions.
+
+Company-specific patterns to consider:
+- Google: Heavy on graph algorithms, dynamic programming, system design thinking
+- Amazon: Leadership principles applied to coding, scalability, arrays/strings
+- Meta/Facebook: Graph problems, BFS/DFS, social network related problems
+- Microsoft: Trees, linked lists, classic CS fundamentals
+- Apple: Memory efficiency, optimization, clean code
+- Netflix: Streaming/queue problems, caching, system design
+- Uber/Lyft: Geospatial algorithms, graphs, real-time systems
+- Airbnb: Search algorithms, matching problems, calendar/scheduling
+- LinkedIn: Graph traversal, social connections, recommendation systems
+- Twitter/X: Real-time processing, queues, rate limiting
+- Stripe: Payment processing, precision, edge cases
+- Bloomberg: Financial algorithms, data processing, time series
+- Oracle: Database-related problems, SQL concepts, enterprise patterns
+- Salesforce: CRM patterns, data relationships, multi-tenancy
+- Adobe: Image processing concepts, creative algorithms
+- Spotify: Music recommendation, playlists, audio algorithms
+- Dropbox: File systems, synchronization, storage optimization
+- Snap: Image/video processing, real-time, stories/feeds
+- Pinterest: Image search, recommendation, visual algorithms
+- Reddit: Voting algorithms, ranking, community detection
+
+Generate exactly 100 DSA interview questions that reflect the SPECIFIC company's known interview style and problem preferences.
 
 Your response must be a valid JSON object with this exact structure:
 {
   "questions": [
     {
       "id": 1,
-      "title": "Two Sum",
+      "title": "Problem Title Here",
       "difficulty": "Easy",
       "category": "Arrays",
       "frequency": "Very High"
@@ -65,15 +89,17 @@ Your response must be a valid JSON object with this exact structure:
   ]
 }
 
-Categories should include: Arrays, Strings, Linked Lists, Trees, Graphs, Dynamic Programming, Binary Search, Stack, Queue, Heap, Hashmap, Two Pointers, Sliding Window, Recursion, Backtracking, Greedy, Math, Bit Manipulation, Design, Sorting.
+Categories: Arrays, Strings, Linked Lists, Trees, Graphs, Dynamic Programming, Binary Search, Stack, Queue, Heap, Hashmap, Two Pointers, Sliding Window, Recursion, Backtracking, Greedy, Math, Bit Manipulation, Design, Sorting.
 
-Difficulties should be: Easy, Medium, Hard.
+Difficulties: Easy, Medium, Hard.
 
-Frequency should be: Very High, High, Medium, Low.
+Frequency: Very High, High, Medium, Low.`;
 
-Make the questions realistic and company-specific based on known interview patterns.`;
+      userPrompt = `Generate the top 100 DSA interview questions that are SPECIFICALLY asked at ${company}. 
 
-      userPrompt = `Generate the top 100 DSA interview questions commonly asked at ${company}. Include a mix of difficulties and categories that match ${company}'s interview style.`;
+The questions MUST reflect ${company}'s unique interview style, problem preferences, and the types of challenges they're known to focus on. Do NOT generate generic questions - make them tailored to what ${company} specifically looks for in candidates.
+
+For example, if this is Google, focus more on graph/DP problems. If Amazon, focus on scalability and arrays. Each company should have a noticeably different set of questions.`;
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
