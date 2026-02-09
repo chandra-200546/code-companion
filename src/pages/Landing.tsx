@@ -245,6 +245,9 @@ export default function Landing() {
             <p className="text-sm text-muted-foreground">
               Built for learning and understanding • AI-powered code translation & optimization
             </p>
+            <Link to="/admin" className="text-muted-foreground/50 hover:text-muted-foreground text-lg leading-none transition-colors">
+              ···
+            </Link>
           </div>
         </div>
       </footer>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { CodeEditor } from "@/components/CodeEditor";
 import { LanguageSelect } from "@/components/LanguageSelect";
@@ -162,8 +162,9 @@ export default function Dashboard() {
         <InterviewPrepSection />
 
         {/* Footer */}
-        <footer className="mt-16 text-center text-sm text-muted-foreground">
+        <footer className="mt-16 text-center text-sm text-muted-foreground flex items-center justify-center gap-4">
           <p>Built for learning and understanding • AI-powered code translation & optimization</p>
+          <Link to="/admin" className="text-muted-foreground/50 hover:text-muted-foreground text-lg leading-none transition-colors">···</Link>
         </footer>
       </div>
     </div>
