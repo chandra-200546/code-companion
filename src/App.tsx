@@ -15,7 +15,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   useEffect(() => {
-    document.title = "AlgoCrux – Master Algorithms & Ace Interviews";
+    document.title = "AlgoCrux – AI-Powered DSA & Interview Prep Platform";
   }, []);
 
   return (
